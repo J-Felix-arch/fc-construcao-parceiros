@@ -259,7 +259,7 @@ if not dp.empty:
     st.plotly_chart(fig2, use_container_width=True)
 
     # ── Tabela ─────────────────────────────────────────────────────────────────
-    with st.expander("📋 Ver pedidos pendentes"):
+    with st.expander("Ver pedidos pendentes"):
         df_tab = dp.copy()
         df_tab["FILIAL_NOME"] = df_tab["FILIAL"].map(lambda x: FILIAIS.get(int(x),str(x)))
         df_tab["DT_FAT"] = pd.to_datetime(df_tab["DT_FAT"]).dt.strftime("%d/%m/%Y")
