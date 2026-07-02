@@ -30,7 +30,15 @@ st.markdown("""
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
   * { font-family:'Nunito',sans-serif !important; }
   [data-testid="stAppViewContainer"] { background:#F5F5F5; }
-  [data-testid="stSidebar"] { background:#FFFFFF; border-right:3px solid #CC0000; }
+  [data-testid="stSidebar"] { background:#FFFFFF; border-right:3px solid #CC0000; color:#1A1A1A !important; }
+  [data-testid="stSidebar"] * { color:#1A1A1A !important; }
+  [data-testid="stSidebar"] label { color:#1A1A1A !important; }
+  [data-testid="stSidebar"] p { color:#1A1A1A !important; }
+  [data-testid="stSidebar"] h2 { color:#1A1A1A !important; }
+  [data-testid="stSidebar"] small { color:#555555 !important; }
+  [data-testid="stAppViewContainer"] { background:#F5F5F5; color:#1A1A1A !important; }
+  [data-testid="stAppViewContainer"] * { color:#1A1A1A !important; }
+  .stMultiSelect label, .stDateInput label { color:#1A1A1A !important; }
   .kpi-card { background:#fff; border-radius:8px; padding:20px 16px 14px; box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center; border-top:4px solid #E0E0E0; }
   .kpi-card.blue   { border-top-color:#CC0000; }
   .kpi-card.red    { border-top-color:#CC0000; }
