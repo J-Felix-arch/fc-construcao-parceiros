@@ -223,9 +223,10 @@ if not dp.empty:
 
     fig.update_layout(
         barmode="stack", plot_bgcolor="white", paper_bgcolor="#F5F6FA",
-        legend=dict(orientation="h", y=1.10, x=0, bgcolor="rgba(0,0,0,0)"),
-        xaxis=dict(showgrid=False, tickfont=dict(size=11)),
-        yaxis=dict(showgrid=True, gridcolor="#E8EAED", title="Toneladas"),
+        font=dict(color="#1A1A1A"),
+        legend=dict(orientation="h", y=1.10, x=0, bgcolor="rgba(0,0,0,0)", font=dict(color="#1A1A1A")),
+        xaxis=dict(showgrid=False, tickfont=dict(size=11, color="#1A1A1A"), title_font=dict(color="#1A1A1A")),
+        yaxis=dict(showgrid=True, gridcolor="#E8EAED", title="Toneladas", tickfont=dict(color="#1A1A1A"), title_font=dict(color="#1A1A1A")),
         height=440, margin=dict(t=80, b=40, l=10, r=10),
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -246,9 +247,10 @@ if not dp.empty:
                      textfont=dict(color=cor, size=11, weight=700))
     fig2.update_layout(
         barmode="stack", plot_bgcolor="white", paper_bgcolor="#F5F6FA",
-        legend=dict(orientation="h", y=1.05, bgcolor="rgba(0,0,0,0)"),
-        xaxis=dict(showgrid=True, gridcolor="#E8EAED", title="Toneladas"),
-        yaxis=dict(showgrid=False, tickfont=dict(size=11)),
+        font=dict(color="#1A1A1A"),
+        legend=dict(orientation="h", y=1.05, bgcolor="rgba(0,0,0,0)", font=dict(color="#1A1A1A")),
+        xaxis=dict(showgrid=True, gridcolor="#E8EAED", title="Toneladas", tickfont=dict(color="#1A1A1A"), title_font=dict(color="#1A1A1A")),
+        yaxis=dict(showgrid=False, tickfont=dict(size=11, color="#1A1A1A")),
         height=max(300, len(t_ord)*32+80), margin=dict(t=60, b=20, l=10, r=10),
     )
     st.plotly_chart(fig2, use_container_width=True)
