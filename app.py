@@ -39,6 +39,12 @@ st.markdown("""
   [data-testid="stAppViewContainer"] { background:#F5F5F5; color:#1A1A1A !important; }
   [data-testid="stAppViewContainer"] * { color:#1A1A1A !important; }
   .stMultiSelect label, .stDateInput label { color:#1A1A1A !important; }
+  [data-testid="stDateInput"] input { color:#1A1A1A !important; background:#FFFFFF !important; }
+  [data-testid="stDateInput"] div { color:#1A1A1A !important; }
+  [data-baseweb="input"] input { color:#1A1A1A !important; }
+  [data-testid="stSidebar"] button { background:#CC0000 !important; color:#FFFFFF !important; border:none !important; }
+  [data-testid="stSidebar"] button p { color:#FFFFFF !important; }
+  [data-testid="stSidebar"] button span { color:#FFFFFF !important; }
   .kpi-card { background:#fff; border-radius:8px; padding:20px 16px 14px; box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center; border-top:4px solid #E0E0E0; }
   .kpi-card.blue   { border-top-color:#CC0000; }
   .kpi-card.red    { border-top-color:#CC0000; }
