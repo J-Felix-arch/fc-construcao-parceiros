@@ -28,7 +28,7 @@ def supa_get(tabela: str, params: dict = None) -> list:
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
-  * { font-family:'Nunito',sans-serif !important; }
+  p, h1, h2, h3, h4, h5, h6, label, div.stMarkdown, .kpi-lbl, .kpi-num, .kpi-sub { font-family:'Nunito',sans-serif !important; }
   [data-testid="stAppViewContainer"] { background:#F5F5F5; }
   [data-testid="stSidebar"] { background:#FFFFFF; border-right:3px solid #CC0000; }
   [data-testid="stSidebar"] p,
