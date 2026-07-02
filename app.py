@@ -161,7 +161,7 @@ st.markdown("---")
 
 # ── Filtros ────────────────────────────────────────────────────────────────────
 f1, f2 = st.columns([3, 3])
-filiais_disp = sorted(df_pend["FILIAL"].unique().tolist())
+filiais_disp = sorted(FILIAIS.keys())
 with f1:
     fil_sel = st.multiselect("🏭 Filiais", filiais_disp, default=filiais_disp,
                               format_func=lambda x: FILIAIS.get(int(x), str(x)))
