@@ -160,14 +160,32 @@ st.markdown(
 st.markdown("---")
 
 # ── Filtros ────────────────────────────────────────────────────────────────────
-f1, f2 = st.columns([3, 3])
+f1, f2, f3, f4 = st.columns([3, 2, 3, 2])
 filiais_disp = sorted(FILIAIS.keys())
 with f1:
     fil_sel = st.multiselect("🏭 Filiais", filiais_disp, default=filiais_disp,
                               format_func=lambda x: FILIAIS.get(int(x), str(x)))
+with f2:
+    tipo_opts = ["FC Entregas", "FC Viagem"]
+    tipo_sel  = st.multiselect("🚛 Tipo", tipo_opts, default=tipo_opts)
+with f3:
+    st_all = ["Em processamento", "Nota Fiscal Emitida", "Pedido de Venda Criado",
+              "Faturado", "Cancelado", "Bloqueado"]
+    st_sel = st.multiselect("📋 Status", st_all, default=st_all)
+with f4:
+    sc_opts = ["Pendente de Coletar", "Ja Coletado"]
+    sc_sel  = st.multiselect("🚚 Status Coleta", sc_opts, default=sc_opts)
 
 fil_int = [int(f) for f in fil_sel] if fil_sel else filiais_disp
 dp = df_pend[df_pend["FILIAL"].isin(fil_int)].copy()
+if tipo_sel:
+    dp = dp[dp["TRANSPORTADORA"].str.contains("|".join(
+        [t.replace("FC Entregas","ENTREGA").replace("FC Viagem","VIAGEM") for t in tipo_sel]
+    ), case=False, na=False)] if not dp.empty else dp
+if st_sel and not dp.empty:
+    dp = dp[dp["STATUS_PEDIDO"].isin(st_sel)]
+if sc_sel and not dp.empty:
+    dp = dp[dp["STATUS_COLETA"].isin(sc_sel)]
 
 if not dp.empty:
     dp["PRAZO_DT"] = pd.to_datetime(dp["PRAZO"])
