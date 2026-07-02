@@ -1,27 +1,28 @@
 """
-App para parceiros — lê do Supabase (dados atualizados 3x/dia: 07h, 12h e 15h)
+App para parceiros — lê do Supabase via REST API (dados atualizados 3x/dia: 07h, 12h e 15h)
 """
 import streamlit as st
 import pandas as pd
-import psycopg2
+import requests
 import plotly.graph_objects as go
-import math
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 
 st.set_page_config(page_title="FC Construção — Parceiros", page_icon="📦", layout="wide")
 
-# ── Supabase ──────────────────────────────────────────────────────────────────
-import os
+# ── Supabase REST API ─────────────────────────────────────────────────────────
+SUPA_URL    = st.secrets["supabase"]["url"]
+SUPA_SECRET = st.secrets["supabase"]["secret"]
+HEADERS = {
+    "apikey":        SUPA_SECRET,
+    "Authorization": f"Bearer {SUPA_SECRET}",
+    "Content-Type":  "application/json",
+}
 
-def conn_supa():
-    return psycopg2.connect(
-        host=st.secrets["supabase"]["host"],
-        port=st.secrets["supabase"]["port"],
-        dbname="postgres",
-        user="postgres",
-        password=st.secrets["supabase"]["password"],
-        sslmode="require",
-    )
+def supa_get(tabela: str, params: dict = None) -> list:
+    r = requests.get(f"{SUPA_URL}/{tabela}", headers=HEADERS, params=params)
+    if r.status_code == 200:
+        return r.json()
+    return []
 
 # ── Estilo ────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -66,30 +67,42 @@ FILIAIS = {
 # ── Carregar dados ─────────────────────────────────────────────────────────────
 @st.cache_data(ttl=600, show_spinner=False)
 def carregar_pendentes(dt_ini: str, dt_fim: str) -> pd.DataFrame:
-    pg = conn_supa()
-    df = pd.read_sql("""
-        SELECT filial, pedido, dt_fat, prazo, peso_kg, dias_atraso,
-               status_dia, transportadora, status_pedido, status_coleta,
-               sincronizado_em
-        FROM pendentes
-        WHERE prazo BETWEEN %s AND %s
-    """, pg, params=(dt_ini, dt_fim))
-    pg.close()
-    if not df.empty:
-        df["PESO_TON"] = df["peso_kg"] / 1000
-        df.columns = [c.upper() for c in df.columns]
-        df["PESO_TON"] = df["PESO_KG"] / 1000
+    rows = supa_get("pendentes", {
+        "prazo": f"gte.{dt_ini}",
+        "and": f"(prazo.lte.{dt_fim})",
+        "select": "filial,pedido,dt_fat,prazo,peso_kg,dias_atraso,status_dia,transportadora,status_pedido,status_coleta",
+        "limit": 10000,
+    })
+    # A REST API do Supabase não suporta "and" como parâmetro diretamente; usar dois filtros separados
+    rows = supa_get("pendentes", {
+        "prazo": f"gte.{dt_ini}",
+        "select": "filial,pedido,dt_fat,prazo,peso_kg,dias_atraso,status_dia,transportadora,status_pedido,status_coleta",
+        "limit": 10000,
+    })
+    if not rows:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows)
+    # filtrar prazo <= dt_fim no lado Python
+    df["prazo"] = pd.to_datetime(df["prazo"])
+    df = df[df["prazo"] <= pd.Timestamp(dt_fim)]
+    df["PESO_TON"] = df["peso_kg"] / 1000
+    df.columns = [c.upper() for c in df.columns]
+    df["PESO_TON"] = df["PESO_KG"] / 1000
     return df
 
 @st.cache_data(ttl=600, show_spinner=False)
 def ultima_atualizacao() -> str:
     try:
-        pg = conn_supa()
-        cur = pg.cursor()
-        cur.execute("SELECT MAX(executado_em) FROM sync_log WHERE status='OK'")
-        r = cur.fetchone(); pg.close()
-        if r and r[0]:
-            return r[0].strftime("%d/%m/%Y %H:%M")
+        rows = supa_get("sync_log", {
+            "status": "eq.OK",
+            "order": "executado_em.desc",
+            "limit": 1,
+            "select": "executado_em",
+        })
+        if rows:
+            from datetime import datetime
+            dt = datetime.fromisoformat(rows[0]["executado_em"].replace("Z", "+00:00"))
+            return dt.strftime("%d/%m/%Y %H:%M")
     except:
         pass
     return "—"
